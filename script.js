@@ -134,3 +134,100 @@ class MobileLineManager {
             formSection.classList.toggle('hidden');
         });
     }
+
+    setupPhoneNumberValidation() {
+        const phoneInput = document.getElementById('phoneNumber');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^\d-]/g, '');
+            if (value.length > 0) {
+                value = value.replace(/^(\d{2,3})(\d{4})(\d{4})$/, '$1-$2-$3');
+            }
+            e.target.value = value;
+        });
+    }
+
+    setupAddOptionHandlers() {
+        const addButtons = document.querySelectorAll('.add-option-btn');
+        addButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const target = e.target.dataset.target;
+                this.addOption(target);
+            });
+        });
+    }
+
+    addOption(target) {
+        const newFieldId = `new${target.charAt(0).toUpperCase() + target.slice(1)}`;
+        const newValue = document.getElementById(newFieldId).value.trim();
+
+        if (newValue) {
+            if (target === 'owner' || target === 'user') {
+                if (!this.people.includes(newValue)) {
+                    this.people.push(newValue);
+                    localStorage.setItem('people', JSON.stringify(this.people));
+                    this.updatePeopleSelectOptions();
+                }
+            } else {
+                const arrayName = `${target}s`;
+                if (!this[arrayName].includes(newValue)) {
+                    this[arrayName].push(newValue);
+                    localStorage.setItem(arrayName, JSON.stringify(this[arrayName]));
+                    this.updateSelectOptions();
+                }
+            }
+            
+            const selectElement = document.getElementById(target);
+            selectElement.value = newValue;
+            
+            document.getElementById(newFieldId).value = '';
+        }
+    }
+
+    setupDeleteOptionHandlers() {
+        const deleteButtons = document.querySelectorAll('.delete-option-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const target = e.target.dataset.target;
+                this.showDeleteOptionsModal(target);
+            });
+        });
+    }
+
+    showDeleteOptionsModal(target) {
+        const existingModal = document.querySelector('.option-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        let options;
+        if (target === 'owner' || target === 'user') {
+            options = this.people;
+        } else {
+            options = this[`${target}s`];
+        }
+        
+        if (!options || options.length === 0) {
+            alert('削除可能な選択肢がありません。');
+            return;
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        document.body.appendChild(overlay);
+
+        const modal = document.createElement('div');
+        modal.className = 'option-modal';
+        modal.innerHTML = `
+            <h3>${this.getTargetLabel(target)}の選択肢削除</h3>
+            <ul>
+                ${options.map(option => `
+                    <li>
+                        ${option}
+                        <button onclick="mobileLineManager.deleteOption('${target}', '${option}')">削除</button>
+                    </li>
+                `).join('')}
+            </ul>
+            <button onclick="this.closest('.option-modal').remove();document.querySelector('.modal-overlay').remove()">閉じる</button>
+        `;
+        document.body.appendChild(modal);
+    }
