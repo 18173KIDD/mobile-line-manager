@@ -10,6 +10,51 @@
     <div class="container">
         <h1>携帯回線管理システム</h1>
         
+        <!-- リマインダー機能追加 -->
+        <div class="reminder-section">
+            <div class="reminder-tabs">
+                <button class="tab-button active" data-tab="dashboard">
+                    🔔 リマインダー
+                </button>
+                <button class="tab-button" data-tab="calendar">
+                    📅 カレンダー
+                </button>
+            </div>
+            
+            <!-- ダッシュボードアラート -->
+            <div id="dashboardTab" class="tab-content active">
+                <div class="reminder-dashboard">
+                    <div id="urgentAlerts" class="alert-section alert-urgent hidden">
+                        <h3>⚠️ 7日以内に解約可能</h3>
+                        <div class="alert-items"></div>
+                    </div>
+                    
+                    <div id="warningAlerts" class="alert-section alert-warning hidden">
+                        <h3>⏰ 30日以内に解約可能</h3>
+                        <div class="alert-items"></div>
+                    </div>
+                    
+                    <div id="noAlerts" class="no-alerts">
+                        <p>📌 直近の解約可能日はありません</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- カレンダービュー -->
+            <div id="calendarTab" class="tab-content hidden">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" id="prevMonth">◀</button>
+                        <h3 id="calendarMonth"></h3>
+                        <button class="calendar-nav" id="nextMonth">▶</button>
+                    </div>
+                    <div id="calendarGrid" class="calendar-grid">
+                        <!-- カレンダーはJavaScriptで動的に生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="form-toggle-container">
             <button id="toggleForm" class="btn-toggle">入力フォームを表示/非表示</button>
         </div>
